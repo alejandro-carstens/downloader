@@ -38,28 +38,30 @@ func (vd *VideoDownloader) GetVideoMeta() *VideoMeta {
     return vd.videoMeta
 }
 
-func (d *VideoDownloader) fillVideoMeta(video *ytdl.VideoInfo) *VideoDownloader {
+func (vd *VideoDownloader) fillVideoMeta(video *ytdl.VideoInfo) *VideoDownloader {
 	vd.videoMeta = new(VideoMeta).
-		SetTitle(strings.Replace(video.Title, DELIMITER, "")).
+		SetTitle(strings.Replace(video.Title, DELIMITER, "", -1)).
 		SetAuthor(video.Author).
 		SetDatePublished(video.DatePublished.Format(DATE_FORMAT)).
-		SetDuration(video.Duration)
+		SetDuration(video.Duration.String())
 
 	return vd
 }
 
 func (vd *VideoDownloader) setTempFileName() *VideoDownloader {
-	vd.tempFileName = strings.Replace(vd.VideoMeta.GetTitle(), " ", DELIMITER, -1) + ".mp4"
+	vd.tempFileName = strings.Replace(vd.videoMeta.GetTitle(), " ", DELIMITER, -1) + ".mp4"
 
 	return vd
 }
 
-func (d *VideoDownloader) setOutputFile() error {
-	vd.outputFile, err = os.Create(vd.tempFileName)
+func (vd *VideoDownloader) setOutputFile() error {
+	outputFile, err := os.Create(vd.tempFileName)
 
 	if err != nil {
 		return err
 	}
+	
+	vd.outputFile = outputFile
 
 	return nil
 }
