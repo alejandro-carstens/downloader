@@ -14,7 +14,7 @@ type AudioExtractor struct {
     mp3File *os.File
 }
 
-func (se *AudioExtractor) ExtractAudio(source string) (*AudioExtractor, error) {
+func (se *AudioExtractor) Extract(source string) (*AudioExtractor, error) {
     ffmpeg, err := exec.LookPath(FFMPEG)        
     
     if err != nil {

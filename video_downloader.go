@@ -34,6 +34,10 @@ func (vd *VideoDownloader) Download(identifier string) (*VideoDownloader, error)
 	return vd, nil
 }
 
+func (vd *VideoDownloader) GetTempFileName() string {
+    return vd.tempFileName
+}
+
 func (vd *VideoDownloader) GetVideoMeta() *VideoMeta {
     return vd.videoMeta
 }
