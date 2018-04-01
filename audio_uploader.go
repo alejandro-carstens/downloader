@@ -76,10 +76,10 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 func (au *AudioUploader) getContainer(location stow.Location) (stow.Container, error) {
 	switch au.kind {
 	case "s3":
-		return location.Container(os.Getenv("BUCKET"))
+		return location.Container(os.Getenv("S3_BUCKET"))
 	}
 
-	return location.Container("")
+	return location.Container(LOCAL)
 }
 
 func (au *AudioUploader) getFileContents(fileName string) (io.Reader, error) {
