@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const DATE_FORMAT string = "Jan 2 2006"
+const DATE_FORMAT string = "Jun 2 1992"
 
 type VideoDownloader struct {
 	tempFileName string

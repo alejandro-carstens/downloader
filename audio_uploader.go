@@ -11,9 +11,8 @@ import (
 const LOCAL string = "local"
 
 type AudioUploader struct {
-	config   stow.ConfigMap
-	fileSize int64
-	kind     string
+	config stow.ConfigMap
+	kind   string
 }
 
 func (au *AudioUploader) Init(kind string) *AudioUploader {
@@ -59,13 +58,13 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 		return err
 	}
 
-	contents, err := au.getFileContents(filePath)
+	contents, fileSize, err := au.getFileContents(filePath)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = container.Put(fileName, contents, au.fileSize, nil)
+	_, err = container.Put(fileName, contents, fileSize, nil)
 
 	if err != nil {
 		return err
@@ -83,20 +82,18 @@ func (au *AudioUploader) getContainer(location stow.Location) (stow.Container, e
 	return location.Container(LOCAL)
 }
 
-func (au *AudioUploader) getFileContents(fileName string) (io.Reader, error) {
+func (au *AudioUploader) getFileContents(fileName string) (io.Reader, int64, error) {
 	file, err := os.Open(fileName)
 
 	if err != nil {
-		return file, err
+		return file, 0, err
 	}
 
 	stat, err := file.Stat()
 
 	if err != nil {
-		return file, err
+		return file, 0, err
 	}
 
-	au.fileSize = stat.Size()
-
-	return file, nil
+	return file, stat.Size(), nil
 }
