@@ -12,7 +12,7 @@ type VideoMeta struct {
 }
 
 func (vi *VideoMeta) SetTitle(title string) *VideoMeta {
-	vi.title = strings.Trim(title, " ")
+	vi.title = strings.Replace(strings.Trim(title, " "), "/", "-", -1)
 
 	return vi
 }

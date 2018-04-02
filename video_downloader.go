@@ -1,12 +1,11 @@
 package downloader
 
 import (
+	"github.com/rs/xid"
 	"github.com/rylio/ytdl"
 	"os"
-	"strings"
 )
 
-const DELIMITER string = "^"
 const DATE_FORMAT string = "Jan 2 2006"
 
 type VideoDownloader struct {
@@ -35,16 +34,16 @@ func (vd *VideoDownloader) Download(identifier string) (*VideoDownloader, error)
 }
 
 func (vd *VideoDownloader) GetTempFileName() string {
-    return vd.tempFileName
+	return vd.tempFileName
 }
 
 func (vd *VideoDownloader) GetVideoMeta() *VideoMeta {
-    return vd.videoMeta
+	return vd.videoMeta
 }
 
 func (vd *VideoDownloader) fillVideoMeta(video *ytdl.VideoInfo) *VideoDownloader {
 	vd.videoMeta = new(VideoMeta).
-		SetTitle(strings.Replace(video.Title, DELIMITER, "", -1)).
+		SetTitle(video.Title).
 		SetAuthor(video.Author).
 		SetDatePublished(video.DatePublished.Format(DATE_FORMAT)).
 		SetDuration(video.Duration.String())
@@ -53,7 +52,7 @@ func (vd *VideoDownloader) fillVideoMeta(video *ytdl.VideoInfo) *VideoDownloader
 }
 
 func (vd *VideoDownloader) setTempFileName() *VideoDownloader {
-	vd.tempFileName = strings.Replace(vd.videoMeta.GetTitle(), " ", DELIMITER, -1) + ".mp4"
+	vd.tempFileName = xid.New().String() + ".mp4"
 
 	return vd
 }
@@ -64,7 +63,7 @@ func (vd *VideoDownloader) setOutputFile() error {
 	if err != nil {
 		return err
 	}
-	
+
 	vd.outputFile = outputFile
 
 	return nil

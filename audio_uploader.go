@@ -25,6 +25,7 @@ func (au *AudioUploader) Init(kind string) *AudioUploader {
 			s3.ConfigRegion:      os.Getenv("S3_REGION"),
 		}
 		au.kind = "s3"
+		break
 	default:
 		path := os.Getenv("LOCAL_PATH")
 
