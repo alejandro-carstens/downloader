@@ -7,13 +7,8 @@ type Downloader struct {
 	videoDownloader *VideoDownloader
 }
 
-func (d *Downloader) Init(storage string) *Downloader {
-	d.audioExtractor = new(AudioExtractor)
-	d.audioUploader = new(AudioUploader).Init(storage)
-	d.fileCleaner = new(FileCleaner)
-	d.videoDownloader = new(VideoDownloader)
-
-	return d
+func New(storage string) *Downloader {
+	return new(Downloader).Init(storage)
 }
 
 func (d *Downloader) Download(identifier string) error {
@@ -41,6 +36,11 @@ func (d *Downloader) Download(identifier string) error {
 		Clean()
 }
 
-func Download(storage string, identifier string) error {
-	return new(Downloader).Init(storage).Download(identifier)
+func (d *Downloader) Init(storage string) *Downloader {
+	d.audioExtractor = new(AudioExtractor)
+	d.audioUploader = new(AudioUploader).Init(storage)
+	d.fileCleaner = new(FileCleaner)
+	d.videoDownloader = new(VideoDownloader)
+
+	return d
 }

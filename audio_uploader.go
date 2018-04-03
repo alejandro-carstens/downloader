@@ -9,6 +9,7 @@ import (
 )
 
 const LOCAL string = "local"
+const S3 string = "s3"
 
 type AudioUploader struct {
 	config stow.ConfigMap
@@ -17,13 +18,13 @@ type AudioUploader struct {
 
 func (au *AudioUploader) Init(kind string) *AudioUploader {
 	switch kind {
-	case "s3":
+	case S3:
 		au.config = stow.ConfigMap{
 			s3.ConfigAccessKeyID: os.Getenv("S3_ACCESS_KEY"),
 			s3.ConfigSecretKey:   os.Getenv("S3_SECRET_KEY"),
 			s3.ConfigRegion:      os.Getenv("S3_REGION"),
 		}
-		au.kind = "s3"
+		au.kind = S3
 		break
 	default:
 		path := os.Getenv("LOCAL_PATH")
@@ -75,7 +76,7 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 
 func (au *AudioUploader) getContainer(location stow.Location) (stow.Container, error) {
 	switch au.kind {
-	case "s3":
+	case S3:
 		return location.Container(os.Getenv("S3_BUCKET"))
 	}
 

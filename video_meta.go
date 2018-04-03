@@ -1,8 +1,6 @@
 package downloader
 
-import (
-	"strings"
-)
+import "strings"
 
 type VideoMeta struct {
 	title         string

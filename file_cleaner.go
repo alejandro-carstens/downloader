@@ -1,8 +1,6 @@
 package downloader
 
-import (
-	"os"
-)
+import "os"
 
 type FileCleaner struct {
 	audioFilePath string
