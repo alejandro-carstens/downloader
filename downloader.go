@@ -44,3 +44,15 @@ func (d *Downloader) Init(storage string) *Downloader {
 
 	return d
 }
+
+func (d *Downloader) GetVideoMeta() *VideoMeta {
+	return d.videoDownloader.GetVideoMeta()
+}
+
+func (d *Downloader) GetPath() string {
+	return d.audioUploader.GetPath()
+}
+
+func (d *Downloader) GetTempFileName() string {
+	return d.videoDownloader.GetTempFileName()
+}

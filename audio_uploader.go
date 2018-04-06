@@ -14,6 +14,7 @@ const S3 string = "s3"
 type AudioUploader struct {
 	config stow.ConfigMap
 	kind   string
+	path   string
 }
 
 func (au *AudioUploader) Init(kind string) *AudioUploader {
@@ -65,13 +66,19 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 		return err
 	}
 
-	_, err = container.Put(fileName, contents, fileSize, nil)
+	item, err := container.Put(fileName, contents, fileSize, nil)
 
 	if err != nil {
 		return err
 	}
 
+	au.path = item.URL().Path
+
 	return nil
+}
+
+func (au *AudioUploader) GetPath() string {
+	return au.path
 }
 
 func (au *AudioUploader) getContainer(location stow.Location) (stow.Container, error) {
