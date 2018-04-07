@@ -1,5 +1,7 @@
 package downloader
 
+import "io"
+
 type Downloader struct {
 	audioExtractor  *AudioExtractor
 	audioUploader   *AudioUploader
@@ -45,6 +47,10 @@ func (d *Downloader) Init(storage string) *Downloader {
 	return d
 }
 
+func (d *Downloader) Get(key string) (io.ReadCloser, error) {
+	return d.audioUploader.Get(key)
+}
+
 func (d *Downloader) GetVideoMeta() *VideoMeta {
 	return d.videoDownloader.GetVideoMeta()
 }
@@ -53,6 +59,10 @@ func (d *Downloader) GetPath() string {
 	return d.audioUploader.GetPath()
 }
 
-func (d *Downloader) GetTempFileName() string {
-	return d.videoDownloader.GetTempFileName()
+func (d *Downloader) GetKey() string {
+	return d.audioUploader.GetKey()
+}
+
+func (d *Downloader) GetDownloadId() string {
+	return d.videoDownloader.GetDownloadId()
 }

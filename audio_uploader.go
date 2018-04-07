@@ -15,6 +15,7 @@ type AudioUploader struct {
 	config stow.ConfigMap
 	kind   string
 	path   string
+	key    string
 }
 
 func (au *AudioUploader) Init(kind string) *AudioUploader {
@@ -73,12 +74,41 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 	}
 
 	au.path = item.URL().Path
+	au.key = item.ID()
 
 	return nil
 }
 
+func (au *AudioUploader) Get(key string) (io.ReadCloser, error) {
+	location, err := stow.Dial(au.kind, au.config)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer location.Close()
+
+	container, err := au.getContainer(location)
+
+	if err != nil {
+		return nil, err
+	}
+
+	item, err := container.Item(key)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return item.Open()
+}
+
 func (au *AudioUploader) GetPath() string {
 	return au.path
+}
+
+func (au *AudioUploader) GetKey() string {
+	return au.key
 }
 
 func (au *AudioUploader) getContainer(location stow.Location) (stow.Container, error) {

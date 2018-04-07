@@ -9,6 +9,7 @@ import (
 const DATE_FORMAT string = "Jun 2 1992"
 
 type VideoDownloader struct {
+	downloadId   string
 	tempFileName string
 	videoMeta    *VideoMeta
 	downloader   *ytdl.VideoInfo
@@ -37,6 +38,10 @@ func (vd *VideoDownloader) GetTempFileName() string {
 	return vd.tempFileName
 }
 
+func (vd *VideoDownloader) GetDownloadId() string {
+	return vd.downloadId
+}
+
 func (vd *VideoDownloader) GetVideoMeta() *VideoMeta {
 	return vd.videoMeta
 }
@@ -52,7 +57,8 @@ func (vd *VideoDownloader) fillVideoMeta(video *ytdl.VideoInfo) *VideoDownloader
 }
 
 func (vd *VideoDownloader) setTempFileName() *VideoDownloader {
-	vd.tempFileName = xid.New().String() + ".mp4"
+	vd.downloadId = xid.New().String()
+	vd.tempFileName = vd.downloadId + ".mp4"
 
 	return vd
 }
