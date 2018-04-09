@@ -61,7 +61,7 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 		return err
 	}
 
-	contents, fileSize, err := au.getFileContents(filePath)
+	contents, fileSize, err := au.GetFileContents(filePath)
 
 	if err != nil {
 		return err
@@ -77,6 +77,22 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 	au.key = item.ID()
 
 	return nil
+}
+
+func (au *AudioUploader) GetFileContents(fileName string) (io.Reader, int64, error) {
+	file, err := os.Open(fileName)
+
+	if err != nil {
+		return file, 0, err
+	}
+
+	stat, err := file.Stat()
+
+	if err != nil {
+		return file, 0, err
+	}
+
+	return file, stat.Size(), nil
 }
 
 func (au *AudioUploader) Get(key string) (io.ReadCloser, error) {
@@ -118,20 +134,4 @@ func (au *AudioUploader) getContainer(location stow.Location) (stow.Container, e
 	}
 
 	return location.Container(LOCAL)
-}
-
-func (au *AudioUploader) getFileContents(fileName string) (io.Reader, int64, error) {
-	file, err := os.Open(fileName)
-
-	if err != nil {
-		return file, 0, err
-	}
-
-	stat, err := file.Stat()
-
-	if err != nil {
-		return file, 0, err
-	}
-
-	return file, stat.Size(), nil
 }

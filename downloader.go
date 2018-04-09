@@ -14,35 +14,39 @@ func New(storage string) *Downloader {
 }
 
 func (d *Downloader) Download(identifier string) error {
-	_, err := d.videoDownloader.Download(identifier)
-
-	if err != nil {
+	if _, err := d.videoDownloader.Download(identifier); err != nil {
 		return err
 	}
 
-	_, err = d.audioExtractor.Extract(d.videoDownloader.GetTempFileName())
-
-	if err != nil {
+	if _, err := d.audioExtractor.Extract(d.videoDownloader.GetTempFileName()); err != nil {
 		return err
 	}
 
-	err = d.audioUploader.
-		Upload(d.videoDownloader.GetVideoMeta().GetTitle(), d.audioExtractor.GetFilePath())
-
-	if err != nil {
+	if err := d.audioUploader.
+		Upload(d.videoDownloader.GetVideoMeta().GetTitle(), d.audioExtractor.GetFilePath()); err != nil {
 		return err
 	}
 
-	return d.fileCleaner.SetAudioFilePath(d.audioExtractor.GetFilePath()).
-		SetVideoFilePath(d.videoDownloader.GetTempFileName()).
-		Clean()
+	d.fileCleaner.
+		SetAudioFilePath(d.audioExtractor.GetFilePath()).
+		SetVideoFilePath(d.videoDownloader.GetTempFileName())
+
+	return nil
+}
+
+func (d *Downloader) Clean() error {
+	return d.fileCleaner.Clean()
+}
+
+func (d *Downloader) GetFileContents() (io.Reader, int64, error) {
+	return d.audioUploader.GetFileContents(d.audioExtractor.GetFilePath())
 }
 
 func (d *Downloader) Init(storage string) *Downloader {
 	d.audioExtractor = new(AudioExtractor)
 	d.audioUploader = new(AudioUploader).Init(storage)
 	d.fileCleaner = new(FileCleaner)
-	d.videoDownloader = new(VideoDownloader)
+	d.videoDownloader = new(VideoDownloader).SetDownloadId()
 
 	return d
 }

@@ -56,8 +56,13 @@ func (vd *VideoDownloader) fillVideoMeta(video *ytdl.VideoInfo) *VideoDownloader
 	return vd
 }
 
-func (vd *VideoDownloader) setTempFileName() *VideoDownloader {
+func (vd *VideoDownloader) SetDownloadId() *VideoDownloader {
 	vd.downloadId = xid.New().String()
+
+	return vd
+}
+
+func (vd *VideoDownloader) setTempFileName() *VideoDownloader {
 	vd.tempFileName = vd.downloadId + ".mp4"
 
 	return vd
