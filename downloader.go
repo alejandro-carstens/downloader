@@ -7,6 +7,7 @@ type Downloader struct {
 	audioUploader   *AudioUploader
 	fileCleaner     *FileCleaner
 	videoDownloader *VideoDownloader
+	fragmentor      *Fragmentor
 }
 
 func New(storage string) *Downloader {
@@ -34,6 +35,10 @@ func (d *Downloader) Download(identifier string) error {
 	return nil
 }
 
+func (d *Downloader) Fragment(file io.Reader, from string, to string) error {
+	return d.fragmentor.Fragment(file, from, to)
+}
+
 func (d *Downloader) Clean() error {
 	return d.fileCleaner.Clean()
 }
@@ -47,6 +52,7 @@ func (d *Downloader) Init(storage string) *Downloader {
 	d.audioUploader = new(AudioUploader).Init(storage)
 	d.fileCleaner = new(FileCleaner)
 	d.videoDownloader = new(VideoDownloader).SetDownloadId()
+	d.fragmentor = new(Fragmentor)
 
 	return d
 }
