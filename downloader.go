@@ -50,8 +50,12 @@ func (d *Downloader) Clean() error {
 	return d.fileCleaner.Clean()
 }
 
-func (d *Downloader) GetFileContents() (io.Reader, int64, error) {
-	return d.audioUploader.GetFileContents(d.audioExtractor.GetFilePath())
+func (d *Downloader) GetFileContents(filePath string) (io.Reader, int64, error) {
+	return d.audioUploader.GetFileContents(filePath)
+}
+
+func (d *Downloader) GetExtractedAudioFilePath() string {
+	return d.audioExtractor.GetFilePath()
 }
 
 func (d *Downloader) Init(storage string) *Downloader {
