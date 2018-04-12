@@ -36,11 +36,11 @@ func (f *Fragmentor) Fragment(file io.Reader, from string, to string) error {
 		return err
 	}
 
-	if err := f.ffmpegFragment("in"+f.downloadId+".mp3", from, to); err != nil {
+	if err := f.ffmpegFragment(from, to); err != nil {
 		return err
 	}
 
-	if err := f.ffmpegNormalize("temp" + f.downloadId + ".mp3"); err != nil {
+	if err := f.ffmpegNormalize(); err != nil {
 		return err
 	}
 
@@ -62,7 +62,7 @@ func (f *Fragmentor) setPaths() *Fragmentor {
 }
 
 func (f *Fragmentor) writeFile(file io.Reader) error {
-	inputFile, err := os.Create("in" + f.downloadId + ".mp3")
+	inputFile, err := os.Create(f.inputPath)
 
 	if err != nil {
 		return err
@@ -77,8 +77,8 @@ func (f *Fragmentor) writeFile(file io.Reader) error {
 	return nil
 }
 
-func (f *Fragmentor) ffmpegFragment(source string, from string, to string) error {
-	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", source, "-ss", from, "-t", to, "-acodec", "copy", "temp"+f.downloadId+".mp3")
+func (f *Fragmentor) ffmpegFragment(from string, to string) error {
+	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", f.inputPath, "-ss", from, "-t", to, "-acodec", "copy", f.tempPath)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -87,8 +87,8 @@ func (f *Fragmentor) ffmpegFragment(source string, from string, to string) error
 	return cmd.Run()
 }
 
-func (f *Fragmentor) ffmpegNormalize(source string) error {
-	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", source, "-af", "volume=5dB", f.outputPath)
+func (f *Fragmentor) ffmpegNormalize() error {
+	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", f.tempPath, "-af", "volume=5dB", f.outputPath)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
