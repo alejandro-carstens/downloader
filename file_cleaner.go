@@ -3,26 +3,21 @@ package downloader
 import "os"
 
 type FileCleaner struct {
-	audioFilePath string
-	videoFilePath string
+	paths []string
 }
 
-func (fc *FileCleaner) SetAudioFilePath(audioFilePath string) *FileCleaner {
-	fc.audioFilePath = audioFilePath
-
-	return fc
-}
-
-func (fc *FileCleaner) SetVideoFilePath(videoFilePath string) *FileCleaner {
-	fc.videoFilePath = videoFilePath
+func (fc *FileCleaner) AddPath(path string) *FileCleaner {
+	fc.paths = append(fc.paths, path)
 
 	return fc
 }
 
 func (fc *FileCleaner) Clean() error {
-	if err := os.Remove(fc.videoFilePath); err != nil {
-		return err
+	for _, path := range fc.paths {
+		if err := os.Remove(path); err != nil {
+			return err
+		}
 	}
 
-	return os.Remove(fc.audioFilePath)
+	return nil
 }

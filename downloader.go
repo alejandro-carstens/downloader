@@ -29,14 +29,22 @@ func (d *Downloader) Download(identifier string) error {
 	}
 
 	d.fileCleaner.
-		SetAudioFilePath(d.audioExtractor.GetFilePath()).
-		SetVideoFilePath(d.videoDownloader.GetTempFileName())
+		AddPath(d.audioExtractor.GetFilePath()).
+		AddPath(d.videoDownloader.GetTempFileName())
 
 	return nil
 }
 
 func (d *Downloader) Fragment(file io.Reader, from string, to string) error {
-	return d.fragmentor.Fragment(file, from, to)
+	if err := d.fragmentor.Fragment(file, from, to); err != nil {
+		return err
+	}
+
+	d.fileCleaner.AddPath(d.fragmentor.GetInputPath()).
+		AddPath(d.fragmentor.GetTempPath()).
+		AddPath(d.fragmentor.GetOutputPath())
+
+	return nil
 }
 
 func (d *Downloader) Clean() error {

@@ -9,16 +9,30 @@ import (
 )
 
 type Fragmentor struct {
-	filePath   string
 	downloadId string
+	outputPath string
+	tempPath   string
+	inputPath  string
 }
 
 func (f *Fragmentor) GetDownloadId() string {
 	return f.downloadId
 }
 
+func (f *Fragmentor) GetOutputPath() string {
+	return f.outputPath
+}
+
+func (f *Fragmentor) GetInputPath() string {
+	return f.inputPath
+}
+
+func (f *Fragmentor) GetTempPath() string {
+	return f.tempPath
+}
+
 func (f *Fragmentor) Fragment(file io.Reader, from string, to string) error {
-	if err := f.setDownloadId().setFilePath().writeFile(file); err != nil {
+	if err := f.setDownloadId().setPaths().writeFile(file); err != nil {
 		return err
 	}
 
@@ -39,8 +53,10 @@ func (f *Fragmentor) setDownloadId() *Fragmentor {
 	return f
 }
 
-func (f *Fragmentor) setFilePath() *Fragmentor {
-	f.filePath = f.downloadId + ".mp3"
+func (f *Fragmentor) setPaths() *Fragmentor {
+	f.outputPath = f.downloadId + ".mp3"
+	f.tempPath = "temp" + f.downloadId + ".mp3"
+	f.inputPath = "in" + f.downloadId + ".mp3"
 
 	return f
 }
@@ -72,7 +88,7 @@ func (f *Fragmentor) ffmpegFragment(source string, from string, to string) error
 }
 
 func (f *Fragmentor) ffmpegNormalize(source string) error {
-	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", source, "-af", "volume=5dB", f.filePath)
+	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", source, "-af", "volume=5dB", f.outputPath)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
