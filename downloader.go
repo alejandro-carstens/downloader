@@ -28,8 +28,7 @@ func (d *Downloader) Download(identifier string) error {
 		return err
 	}
 
-	d.fileCleaner.
-		AddPath(d.audioExtractor.GetFilePath()).
+	d.fileCleaner.AddPath(d.audioExtractor.GetFilePath()).
 		AddPath(d.videoDownloader.GetTempFileName())
 
 	return nil
@@ -56,11 +55,11 @@ func (d *Downloader) GetFileContents() (io.Reader, int64, error) {
 }
 
 func (d *Downloader) Init(storage string) *Downloader {
-	d.audioExtractor = new(AudioExtractor)
+	d.videoDownloader = new(VideoDownloader).SetDownloadId()
 	d.audioUploader = new(AudioUploader).Init(storage)
 	d.fileCleaner = new(FileCleaner)
-	d.videoDownloader = new(VideoDownloader).SetDownloadId()
 	d.fragmentor = new(Fragmentor)
+	d.audioExtractor = new(AudioExtractor)
 
 	return d
 }
