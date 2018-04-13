@@ -78,7 +78,7 @@ func (f *Fragmentor) writeFile(file io.Reader) error {
 }
 
 func (f *Fragmentor) ffmpegFragment(from string, to string) error {
-	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", f.inputPath, "-ss", from, "-t", to, "-acodec", "copy", f.tempPath)
+	cmd := exec.Command(FFMPEG, "-loglevel", "quiet", "-i", f.inputPath, "-ss", from, "-to", to, "-acodec", "copy", f.tempPath)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -88,7 +88,7 @@ func (f *Fragmentor) ffmpegFragment(from string, to string) error {
 }
 
 func (f *Fragmentor) ffmpegNormalize() error {
-	cmd := exec.Command(FFMPEG, "-i", "-loglevel", "quiet", f.tempPath, "-af", "volume=5dB", f.outputPath)
+	cmd := exec.Command(FFMPEG, "-loglevel", "quiet", "-i", f.tempPath, "-af", "volume=5dB", f.outputPath)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

@@ -34,8 +34,13 @@ func (d *Downloader) Download(identifier string) error {
 	return nil
 }
 
-func (d *Downloader) Fragment(file io.Reader, from string, to string) error {
+func (d *Downloader) Fragment(file io.Reader, title string, from string, to string) error {
 	if err := d.fragmentor.Fragment(file, from, to); err != nil {
+		return err
+	}
+
+	if err := d.audioUploader.
+		Upload(title, d.fragmentor.GetOutputPath()); err != nil {
 		return err
 	}
 
@@ -44,6 +49,10 @@ func (d *Downloader) Fragment(file io.Reader, from string, to string) error {
 		AddPath(d.fragmentor.GetOutputPath())
 
 	return nil
+}
+
+func (d *Downloader) GetFragmentor() *Fragmentor {
+	return d.fragmentor
 }
 
 func (d *Downloader) Clean() error {
