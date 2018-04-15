@@ -79,6 +79,24 @@ func (au *AudioUploader) Upload(fileName string, filePath string) error {
 	return nil
 }
 
+func (au *AudioUploader) Destroy(key string) error {
+	location, err := stow.Dial(au.kind, au.config)
+
+	if err != nil {
+		return err
+	}
+
+	defer location.Close()
+
+	container, err := au.getContainer(location)
+
+	if err != nil {
+		return err
+	}
+
+	return container.RemoveItem(key)
+}
+
 func (au *AudioUploader) GetFileContents(fileName string) (io.Reader, int64, error) {
 	file, err := os.Open(fileName)
 

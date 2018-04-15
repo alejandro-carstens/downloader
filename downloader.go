@@ -59,6 +59,10 @@ func (d *Downloader) Clean() error {
 	return d.fileCleaner.Clean()
 }
 
+func (d *Downloader) Destroy(key string) error {
+	return d.audioUploader.Destroy(key)
+}
+
 func (d *Downloader) GetFileContents(filePath string) (io.Reader, int64, error) {
 	return d.audioUploader.GetFileContents(filePath)
 }
